@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcmeMonthly.Migrations
 {
     [DbContext(typeof(AcmeContext))]
-    [Migration("20240706123557_SeedInitialData")]
-    partial class SeedInitialData
+    [Migration("20240707065712_ReInitStructureAndSeedData")]
+    partial class ReInitStructureAndSeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,14 +36,12 @@ namespace AcmeMonthly.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PostCode")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
@@ -79,6 +77,27 @@ namespace AcmeMonthly.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("AcmeMonthly.Entities.CompanyDeliveryCountry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DeliveryCountryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrintDistributorId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryCountryId");
+
+                    b.HasIndex("PrintDistributorId");
+
+                    b.ToTable("CountriesDelivery");
+                });
+
             modelBuilder.Entity("AcmeMonthly.Entities.Country", b =>
                 {
                     b.Property<int>("Id")
@@ -96,80 +115,6 @@ namespace AcmeMonthly.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CountryCode = "AFG",
-                            Name = "Afghanistan"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CountryCode = "SLB",
-                            Name = "Albania"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CountryCode = "DZA",
-                            Name = "Algeria"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CountryCode = "AND",
-                            Name = "Andorra"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CountryCode = "AGO",
-                            Name = "Angola"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CountryCode = "ATG",
-                            Name = "Antigua and Barbuda"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CountryCode = "ARG",
-                            Name = "Argentina"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CountryCode = "ARM",
-                            Name = "Armenia"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CountryCode = "ABW",
-                            Name = "Aruba"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CountryCode = "AUS",
-                            Name = "Australia"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CountryCode = "AUT",
-                            Name = "Austria"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            CountryCode = "NZL",
-                            Name = "New Zealand"
-                        });
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Customer", b =>
@@ -185,23 +130,6 @@ namespace AcmeMonthly.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Dave Davies"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bob Smith"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Rachel Jenkins"
-                        });
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Publication", b =>
@@ -221,26 +149,6 @@ namespace AcmeMonthly.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Publications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "You'd better off using the internet",
-                            Name = "Acme EF Coding For Dummies"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Practical Advice For Getting Burned",
-                            Name = "How To Lead Teams"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "But don't tell them",
-                            Name = "The Customer Is Not Right "
-                        });
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Subscription", b =>
@@ -299,6 +207,25 @@ namespace AcmeMonthly.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("AcmeMonthly.Entities.CompanyDeliveryCountry", b =>
+                {
+                    b.HasOne("AcmeMonthly.Entities.Country", "DeliveryCountry")
+                        .WithMany()
+                        .HasForeignKey("DeliveryCountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AcmeMonthly.Entities.Company", "PrintDistributor")
+                        .WithMany()
+                        .HasForeignKey("PrintDistributorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryCountry");
+
+                    b.Navigation("PrintDistributor");
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Subscription", b =>

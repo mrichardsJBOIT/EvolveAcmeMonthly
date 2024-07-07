@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcmeMonthly.Migrations
 {
     [DbContext(typeof(AcmeContext))]
-    [Migration("20240706112702_CreateDbTablesInitialMigration")]
-    partial class CreateDbTablesInitialMigration
+    [Migration("20240707104812_FinalMigration")]
+    partial class FinalMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,14 +36,12 @@ namespace AcmeMonthly.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PostCode")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
@@ -77,6 +75,27 @@ namespace AcmeMonthly.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("AcmeMonthly.Entities.CompanyDeliveryCountry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DeliveryCountryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrintDistributorId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryCountryId");
+
+                    b.HasIndex("PrintDistributorId");
+
+                    b.ToTable("CountriesDelivery");
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Country", b =>
@@ -153,9 +172,8 @@ namespace AcmeMonthly.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -188,6 +206,25 @@ namespace AcmeMonthly.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("AcmeMonthly.Entities.CompanyDeliveryCountry", b =>
+                {
+                    b.HasOne("AcmeMonthly.Entities.Country", "DeliveryCountry")
+                        .WithMany()
+                        .HasForeignKey("DeliveryCountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AcmeMonthly.Entities.Company", "PrintDistributor")
+                        .WithMany()
+                        .HasForeignKey("PrintDistributorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryCountry");
+
+                    b.Navigation("PrintDistributor");
                 });
 
             modelBuilder.Entity("AcmeMonthly.Entities.Subscription", b =>

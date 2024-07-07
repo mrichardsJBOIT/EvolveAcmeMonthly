@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace AcmeMonthly.Entities;
 
 public class Address
 {
+    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
     public int Id { get; set; }
 
     public AddressTypes Type { get; set; }
@@ -18,8 +20,8 @@ public class Address
     public string AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }
     public string? AddressLine3 { get; set; }
-    public string City { get; set; }
-    public string PostCode { get; set; }
+    public string? City { get; set; }
+    public string? PostCode { get; set; }
     public Country Country { get; set; }
 
 }

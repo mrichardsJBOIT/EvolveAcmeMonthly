@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AcmeMonthly.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDbTablesInitialMigration : Migration
+    public partial class ReInitStructureAndSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,8 +62,8 @@ namespace AcmeMonthly.Migrations
                     AddressLine1 = table.Column<string>(type: "TEXT", nullable: false),
                     AddressLine2 = table.Column<string>(type: "TEXT", nullable: true),
                     AddressLine3 = table.Column<string>(type: "TEXT", nullable: true),
-                    City = table.Column<string>(type: "TEXT", nullable: false),
-                    PostCode = table.Column<string>(type: "TEXT", nullable: false),
+                    City = table.Column<string>(type: "TEXT", nullable: true),
+                    PostCode = table.Column<string>(type: "TEXT", nullable: true),
                     CountryId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -134,6 +134,32 @@ namespace AcmeMonthly.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CountriesDelivery",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PrintDistributorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeliveryCountryId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CountriesDelivery", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CountriesDelivery_Companies_PrintDistributorId",
+                        column: x => x.PrintDistributorId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CountriesDelivery_Countries_DeliveryCountryId",
+                        column: x => x.DeliveryCountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_CountryId",
                 table: "Addresses",
@@ -143,6 +169,16 @@ namespace AcmeMonthly.Migrations
                 name: "IX_Companies_AddressId",
                 table: "Companies",
                 column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CountriesDelivery_DeliveryCountryId",
+                table: "CountriesDelivery",
+                column: "DeliveryCountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CountriesDelivery_PrintDistributorId",
+                table: "CountriesDelivery",
+                column: "PrintDistributorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_CustomerId",
@@ -164,19 +200,22 @@ namespace AcmeMonthly.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "CountriesDelivery");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
 
             migrationBuilder.DropTable(
-                name: "Addresses");
+                name: "Companies");
 
             migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Publications");
+
+            migrationBuilder.DropTable(
+                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "Countries");
